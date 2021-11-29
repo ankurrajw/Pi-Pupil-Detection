@@ -3,15 +3,13 @@ import time
 srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink'
 cap = cv2.VideoCapture(srcPiCam)
 
-srcUSBCam = 'v4l2src ! video/x-raw,width=640,height=480 ! videoconvert ! appsink'
 
+""" change device parameter by checking the device id in v4l2
+command v4l2-ctl --list-devices
+"""
+srcUSBCam = 'v4l2src device = /dev/video2 ! video/x-raw,width=640,height=480 ! videoconvert ! appsink'
 cap2 = cv2.VideoCapture(srcUSBCam)
 
-#cap.set(3,640)
-#cap.set(4,360)
-
-#cap2.set(3,640)
-#cap2.set(4,360)
 
 count_pics = 0
 
