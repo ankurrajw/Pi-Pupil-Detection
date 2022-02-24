@@ -78,5 +78,5 @@ class pupil_detection():
             print('Image file "' + self._img_path + '" could not be loaded.')
 
 
-id = pupil_detection(r'../Results/OldImages/imUSB23.png')
+id = pupil_detection(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Inference\SidePupilImages\hough_circle598.png")
 id.start_detection()
