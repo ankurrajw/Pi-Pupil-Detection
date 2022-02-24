@@ -13,7 +13,7 @@ cap = cv.VideoCapture(srcPiCam)
 def create_workspace():
     base_path = "/home/pi/Desktop/master-thesis-eye-tracking/Results/Ellipse/"
     time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-    name_workspace = base_path + "Hough" + time_right_now + '/'
+    name_workspace = base_path + "Ellipse" + time_right_now + '/'
     if not os.path.exists(name_workspace):
         os.makedirs(name_workspace)
         print("folder name", name_workspace)
@@ -65,10 +65,10 @@ while count < 600:
                 # ellipse
                 if 50 < c.shape[0] < 100:
                     cv.ellipse(roi, minEllipse[i], color, 2)
-                    cv.imwrite(folder_name + "hough_circle" + str(count) + ".png", output)
+                    cv.imwrite(folder_name + "ellipse" + str(count) + ".png", roi)
 
         else:
-            cv.imwrite(folder_name + "hough_circle" + str(count) + ".png", frame)
+            cv.imwrite(folder_name + "ellipse" + str(count) + ".png", frame)
 
 cap.release()
 
