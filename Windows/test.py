@@ -10,13 +10,13 @@ def reloadImage():
 
 
 def trackbarCallback(x):
-    print(f"threshold value {x}")
+    print(f"threshold_canny value {x}")
 
 
 cv.namedWindow("test")
 cv.resizeWindow("test", (500, 500))
-cv.createTrackbar("threshold 1", "test", 0, 1000, trackbarCallback)
-cv.createTrackbar("threshold 2", "test", 0, 1000, trackbarCallback)
+cv.createTrackbar("threshold_canny 1", "test", 0, 1000, trackbarCallback)
+cv.createTrackbar("threshold_canny 2", "test", 0, 1000, trackbarCallback)
 
 # roi = cv.dilate(roi, None,iterations = 1)
 # roi = cv.erode(roi, None,iterations = 1)
@@ -27,8 +27,8 @@ while True:
     img = cv.GaussianBlur(img, (3, 3), 30)
     roi = img[220:640, 0:480]
     roi_copy = img_copy[220:640, 0:480]
-    th1 = cv.getTrackbarPos("threshold 1", "test")
-    th2 = cv.getTrackbarPos("threshold 2", "test")
+    th1 = cv.getTrackbarPos("threshold_canny 1", "test")
+    th2 = cv.getTrackbarPos("threshold_canny 2", "test")
     edges = cv.Canny(roi, th1, 2 * th1, apertureSize=3)
 
     contours, _ = cv.findContours(edges, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)

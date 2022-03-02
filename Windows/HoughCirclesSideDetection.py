@@ -28,7 +28,7 @@ gray = cv2.medianBlur(clahe, 5)
 _, threshold = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY_INV)
 # th2 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
 #                            cv2.THRESH_BINARY_INV, 49, 10)
-# ret3,th3 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+# ret3,th3 = cv2.threshold_canny(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
 th3 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                             cv2.THRESH_BINARY_INV, 15, 5)
 
@@ -38,7 +38,7 @@ circles = cv2.HoughCircles(th3, cv2.HOUGH_GRADIENT, 1, 400, param1=40, param2=15
 print(circles)
 cv2.imshow("Input Image", roi)
 cv2.imshow("Gray Image", gray)
-cv2.imshow("simple threshold", threshold)
+cv2.imshow("simple threshold_canny", threshold)
 # cv2.imshow("adaptive mean th", th2)
 cv2.imshow("gaussian  th", th3)
 cv2.setMouseCallback('adaptive mean th', click_mouse_button)

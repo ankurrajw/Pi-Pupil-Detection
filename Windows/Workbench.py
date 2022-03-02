@@ -21,7 +21,7 @@ circles = cv2.HoughCircles(threshold, cv2.HOUGH_GRADIENT, 1, 100, param1=40, par
 print(circles)
 cv2.imshow("Image", output)
 cv2.imshow("gray", gray)
-cv2.imshow("threshold", threshold)
+cv2.imshow("threshold_canny", threshold)
 cv2.imshow("img_erosion", img_erosion)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

@@ -89,6 +89,6 @@ while count < 600:
 
 # cv2.imshow("Image", output)
 # cv2.imshow("gray",gray)
-# cv2.imshow("threshold", threshold)
+# cv2.imshow("threshold_canny", threshold_canny)
 cv2.waitKey(0)
 cv2.destroyAllWindows()

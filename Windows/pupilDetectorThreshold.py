@@ -1,7 +1,7 @@
 """
 Author : Ankur Raj
 
-This approach of pupil detection is based on detection using threshold.
+This approach of pupil detection is based on detection using threshold_canny.
 
 Input An image of pupil (480*640)
 Output An image with pupil marked in addition to auxiliary images
@@ -12,11 +12,11 @@ import math
 
 
 def trackbarCallback(x):
-    print(f"threshold value {x}")
+    print(f"threshold_canny value {x}")
 
 
 cv2.namedWindow("test")
-cv2.createTrackbar("threshold", "test", 0, 255, trackbarCallback)
+cv2.createTrackbar("threshold_canny", "test", 0, 255, trackbarCallback)
 
 while True:
     frame = cv2.imread("../Results/infrared/imPi8.png")  # input image
@@ -26,7 +26,7 @@ while True:
 
     # gray_frame = cv2.GaussianBlur(gray_frame, (3, 3), 40)
 
-    value_threshold = cv2.getTrackbarPos("threshold", "test")
+    value_threshold = cv2.getTrackbarPos("threshold_canny", "test")
     # value_threshold = 40  # it works best for this value
 
 
@@ -71,7 +71,7 @@ while True:
 
     # cv2.imshow("image", frame)
     cv2.imshow("gray frame", gray_frame)
-    cv2.imshow("threshold image", threshold)
+    cv2.imshow("threshold_canny image", threshold)
     cv2.imshow("roi", roi)
 
     key = cv2.waitKey(1)

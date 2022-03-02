@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 
 def trackbarCallback(x):
-    print(f"threshold value {x}")
+    print(f"threshold_canny value {x}")
 cv.namedWindow("test")
-cv.createTrackbar("threshold", "test", 0, 255, trackbarCallback)
+cv.createTrackbar("threshold_canny", "test", 0, 255, trackbarCallback)
 # image read
 img = cv.imread("../Results/Inference/Hough27_01_2022_12_45_37/hough_circle2.png")
 img = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -24,7 +24,7 @@ while True:
     #equ = cv.equalizeHist(img)
     clahe = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     cl1 = clahe.apply(img)
-    value_threshold = cv.getTrackbarPos("threshold", "test")
+    value_threshold = cv.getTrackbarPos("threshold_canny", "test")
     gray = cv2.medianBlur(cl1, 9)
     _, threshold = cv.threshold(cl1, 133, 255, cv.THRESH_BINARY_INV)
     circles = cv2.HoughCircles(threshold, cv2.HOUGH_GRADIENT, 1, 100, param1=40, param2=15, minRadius=20,
@@ -60,7 +60,7 @@ while True:
     cv.imshow("original image", img)
     #cv.imshow("histogram equ image", equ)
     cv.imshow("CLAHE image", cl1)
-    cv.imshow("threshold image", threshold)
+    cv.imshow("threshold_canny image", threshold)
     key = cv.waitKey(1)
     if key == 27:
         break
