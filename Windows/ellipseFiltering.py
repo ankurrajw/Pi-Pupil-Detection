@@ -11,8 +11,8 @@ def filter_contour(contours):
     '''TODO filter contours to get ellipses based on area and circularity
     DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
     from contour ?
-    ANS: Since pixels of contour leads to a higher value of circularity > 200. Doing a convex hull leads to a lower
-    value since we don't deal with discritised pixels '''
+    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
+    th_value since we don't deal with discritised pixels '''
     contours_filtered = []
     print("Initial Contours : {}".format(len(contours)))
     print("Filtered Contours")
@@ -34,28 +34,32 @@ def filter_contour(contours):
     # print("Circularity {} {}".format(i, circularity))
 
 
-# src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared\imPi21.png")
+#src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared\imPi21.png")
 #src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Inference\SidePupilImages\hough_circle338.png")
-src_image = cv.imread( r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle380.png")
+src_image = cv.imread( r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle363.png")
 
 roi = src_image[220:640, 0:480]
 output = roi.copy()
-src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-src_gray = cv.bitwise_not(src_gray)
+src_gray_original = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
+src_gray = src_gray_original.copy()
+#src_gray = cv.bitwise_not(src_gray)
 
 # CLAHE operation is not helpful for canny edge detection
 # cl1 = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
 # clahe = cl1.apply(src_gray)
+#src_gray = cv.GaussianBlur(src_gray, (7,7), 30)
+src_gray = cv.medianBlur(src_gray, 23)
 
-src_gray = cv.medianBlur(src_gray, 9)
-kernel = np.ones((5, 5), np.uint8)
 # _, src_gray = cv.threshold_canny(src_gray, 120, 255, cv.THRESH_BINARY_INV)
+kernel = np.ones((7, 7), np.uint8)
 opening = cv.morphologyEx(src_gray, cv.MORPH_OPEN, kernel)
+#erosion = cv.erode(src_gray,kernel,iterations = 1)
+#dilation = cv.dilate(src_gray,kernel,iterations = 1)
 #Kristof Van Laerhoven
 threshold_canny = 15
 #Ankur
 #threshold_canny = 20
-canny_output = cv.Canny(src_gray, threshold_canny, threshold_canny * 2)
+canny_output = cv.Canny(opening, threshold_canny, threshold_canny * 2)
 contours, _ = cv.findContours(canny_output, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 contours_filtered = filter_contour(contours)
 
@@ -83,9 +87,9 @@ drawing_window = 'Drawing'
 cv.namedWindow(drawing_window)
 
 cv.imshow(source_window, roi)
-# cv.imshow(gray_window, src_gray)
+cv.imshow(gray_window, src_gray)
 cv.imshow(drawing_window, drawing)
-# cv.imshow("opening", opening)
+cv.imshow("opening", opening)
 cv.imshow("canny", canny_output)
 cv.waitKey()
 
