@@ -1,3 +1,14 @@
+"""
+A GUI interface to check pupil ellipse filtering by changing the values of threshold.
+
+This tool is a quick way to check which threshold is a better fit for experiment.
+parameters - canny_threshold
+             median_blur_kernel_size
+             morphology_kernel_opening_operation
+
+"""
+
+
 import cv2 as cv
 import numpy as np
 import random as rng
@@ -16,7 +27,7 @@ ch.setFormatter(formatter)
 
 logger.addHandler(ch)
 
-logger.info("*"*50)
+logger.info("*" * 50)
 logger.info("EXPERIMENT START")
 
 '''Trackbar titles'''
@@ -37,8 +48,8 @@ def filter_contour(contours):
     """TODO filter contours to get ellipses based on area and circularity
     DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
     from contour ?
-    ANS: Since pixels of contour leads to a higher value of circularity > 200. Doing a convex hull leads to a lower
-    value since we don't deal with discritised pixels """
+    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
+    th_value since we don't deal with discritised pixels """
     contours_filtered = []
     print("Initial Contours : {}".format(len(contours)))
     print("Filtered Contours:")
@@ -58,12 +69,9 @@ def filter_contour(contours):
     return contours_filtered
 
 
-
-
 def draw_ellipse(drawing, contours_filtered):
     minEllipse = [None] * len(contours_filtered)
     for i, c in enumerate(contours_filtered):
-
         color = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
         minEllipse[i] = cv.fitEllipse(c)
         cv.drawContours(drawing, contours_filtered, i, color)
@@ -117,6 +125,7 @@ def morphology_operations(val):
     cv.imshow("source", output)
     cv.imshow("drawing", drawing)
     cv.imshow(result_window, canny_output)
+
     print("*" * 30)
     print(
         "Values: Median Blur Kernel Size : {} Opening Kernel Size : {} Canny : {}".format(median_blur_th,
@@ -138,28 +147,34 @@ cv.createTrackbar(morph_operations_kernel_size, window_name, morph_value, morph_
 
 result_window = "results"
 
-#src_image = cv.imread(
+# src_image = cv.imread(
 #    r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
 
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
+#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
+folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
+
 #folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
+# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0
 total_images = len(os.listdir(folder_path))
+
 for path in os.listdir(folder_path):
     src_image_name = os.path.join(folder_path, path)
     print("Image Name {}".format(src_image_name))
     src_image = cv.imread(src_image_name)
-    key = cv.waitKey(10)
+    key = cv.waitKey(0)
     ellipse_detected += morphology_operations(0)
 
     if key == 27:
         break
 
-logger.info("Ellipse Detected {}, Total Images {}, Percentage {}".format(ellipse_detected,total_images,ellipse_detected/total_images))
-
+logger.info("Ellipse Detected {}, Total Images {}, Percentage {}".format(ellipse_detected, total_images,
+                                                                         ellipse_detected / total_images))
+median_blur_th = cv.getTrackbarPos(median_blur, window_name)
+canny_threshold_th = cv.getTrackbarPos(canny_threshold, window_name)
+logger.info("threshold = {}, median_blur_k_size = {}".format(canny_threshold_th, median_blur_th))
 cv.waitKey(1)
 cv.destroyAllWindows()
 logger.info("EXPERIMENT END")
-logger.info("*"*50)
-
+logger.info("*" * 50)
