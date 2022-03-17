@@ -27,8 +27,7 @@ while True:
     # gray_frame = cv2.GaussianBlur(gray_frame, (3, 3), 40)
 
     value_threshold = cv2.getTrackbarPos("threshold_canny", "test")
-    # value_threshold = 40  # it works best for this value
-
+    # value_threshold = 40  # it works best for this th_value
 
     _, threshold = cv2.threshold(gray_frame, value_threshold, 255, cv2.THRESH_BINARY_INV)
 
