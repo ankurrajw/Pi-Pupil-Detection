@@ -7,7 +7,7 @@ import os
 
 
 class data_collector:
-    landmarks = [(0.05, 0.05), (0.05, 0.95), (0.5, 0.5), (0.95, 0.95), (0.95, 0.05)]
+    landmarks = [(0.1, 0.1), (0.1, 0.9), (0.5, 0.5), (0.9, 0.9), (0.9, 0.1)]
     length = 20
 
     def __init__(self, window, num_pics):
@@ -38,15 +38,17 @@ class data_collector:
     def collect_pics_experiment(self):
         name_workspace = data_collector.create_workspace(
             r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Windows\test\\")
-        for loc in data_collector.landmarks:
+        count = 0
+        max_len_experiment = len(data_collector.landmarks)
+        while count < max_len_experiment:
             key = cv.waitKey()
             if key == 27 or key == ord("q"):
                 cv.destroyAllWindows()
                 break
             elif key == ord("n"):
                 self.collect_pictures(name_workspace)
-                print("Collected Pictures for loc {}".format(self.loc_to_pixel(loc)))
-        print("Experiment Completed!!")
+                count += 1
+        print("Program Exit!!")
 
     def collect_pictures(self, name_workspace):
         cap_pi, _ = data_collector.open_video_feed()
@@ -68,8 +70,8 @@ class data_collector:
     @staticmethod
     def open_video_feed():
         SRCPICAM = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink'
-        cap_pi = cv.VideoCapture(0, cv.CAP_DSHOW)
-
+        cap_pi = cv.VideoCapture(0, cv.CAP_DSHOW)  # cv.CAP_GSTREAMER for linux
+        cap_pi.set(cv.CAP_PROP_FPS, 90)
         """ change device parameter by checking the device id in v4l2
         command v4l2-ctl --list-devices
         """
@@ -108,6 +110,4 @@ if __name__ == '__main__':
 
     cv.imshow(window_name, test)
     experiment.collect_pics_experiment()
-
-    cv.waitKey()
     cv.destroyAllWindows()
