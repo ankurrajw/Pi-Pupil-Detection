@@ -8,7 +8,6 @@ parameters - canny_threshold
 
 """
 
-
 import cv2 as cv
 import numpy as np
 import random as rng
@@ -150,13 +149,14 @@ result_window = "results"
 # src_image = cv.imread(
 #    r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
 
-#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
+# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
 folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
 
-#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
+# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
 # folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0
+multiple_ellipses = 0
 total_images = len(os.listdir(folder_path))
 
 for path in os.listdir(folder_path):
@@ -164,13 +164,19 @@ for path in os.listdir(folder_path):
     print("Image Name {}".format(src_image_name))
     src_image = cv.imread(src_image_name)
     key = cv.waitKey(0)
-    ellipse_detected += morphology_operations(0)
+    """TODO: cHECK FORMULA FOR MULTIPLE ELLIPSE CALCULATION"""
+    len_contours_filtered = morphology_operations(0)
+    ellipse_detected += len_contours_filtered
+    print("contours filtered length ", len_contours_filtered)
+    if len_contours_filtered > 1:
+        multiple_ellipses += len_contours_filtered - 1
 
     if key == 27:
         break
 
-logger.info("Ellipse Detected {}, Total Images {}, Percentage {}".format(ellipse_detected, total_images,
-                                                                         ellipse_detected / total_images))
+logger.info("Ellipse Single Detected {}, Multiple Ellipse {}, Total Images {}, Percentage Detection {}".format(
+    (ellipse_detected - multiple_ellipses), multiple_ellipses, total_images,
+    (ellipse_detected - multiple_ellipses) / total_images))
 median_blur_th = cv.getTrackbarPos(median_blur, window_name)
 canny_threshold_th = cv.getTrackbarPos(canny_threshold, window_name)
 logger.info("threshold = {}, median_blur_k_size = {}".format(canny_threshold_th, median_blur_th))
