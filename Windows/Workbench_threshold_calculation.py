@@ -6,22 +6,21 @@ import pandas as pd
 import logging
 import glob
 from datetime import datetime
-import tqdm
 
 
 # create a logger with name of the file
 def create_logger():
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    _logger = logging.getLogger(__name__)
+    _logger.setLevel(logging.DEBUG)
     ch = logging.FileHandler("../log_threshold_determination.log")
     ch.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     ch.setFormatter(formatter)
-    logger.addHandler(ch)
+    _logger.addHandler(ch)
 
-    logger.info("*" * 50)
-    logger.info("EXPERIMENT START")
-    return logger
+    _logger.info("*" * 50)
+    _logger.info("EXPERIMENT START")
+    return _logger
 
 
 logger = create_logger()
@@ -30,7 +29,8 @@ MEDIAN_BLUR_K_SIZE_VALUES = [7, 9, 11, 13, 15, 17, 19, 21, 23]
 MORPH_VALUES = 1
 
 # CANNY_THRESHOLD_VALUES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]  # list for canny values
-CANNY_THRESHOLD_VALUES = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 55, 60, 65, 70]  # list for canny values
+CANNY_THRESHOLD_VALUES = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 55, 60, 65,
+                          70]  # list for canny values
 columns = ('image_name', 'threshold_canny', 'kernel_size_blur', 'area_convex_hull', 'area_ellipse',
            'circularity_hull')
 
@@ -44,7 +44,7 @@ def filter_contour(contours):
     from contour ?
     ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
     th_value since we don't deal with discritised pixels """
-    contours_filtered = []
+    _contours_filtered = []
     # print("Initial Contours : {}".format(len(contours)))
     # print("Filtered Contours:")
     for i, c in enumerate(contours):
@@ -57,18 +57,18 @@ def filter_contour(contours):
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
                 if 0.8 < circularity_hull:  # filtering based on circularity
                     # print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
-                    contours_filtered.append(c)
+                    _contours_filtered.append(c)
         except ZeroDivisionError:
             print("Division by zero for contour {}".format(i))
-    return contours_filtered
+    return _contours_filtered
 
 
-def draw_ellipse(drawing, contours_filtered):
-    minEllipse = [None] * len(contours_filtered)
-    for i, c in enumerate(contours_filtered):
+def draw_ellipse(drawing, _contours_filtered):
+    minEllipse = [None] * len(_contours_filtered)
+    for i, c in enumerate(_contours_filtered):
         color = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
         minEllipse[i] = cv.fitEllipse(c)
-        cv.drawContours(drawing, contours_filtered, i, color)
+        cv.drawContours(drawing, _contours_filtered, i, color)
         (x, y), (MA, ma), angle = minEllipse[i]
         area_contour_hull = cv.contourArea(c)
         area_ellipse = (np.pi / 4) * MA * ma
@@ -136,11 +136,11 @@ def morphology_operations(*args, **kwargs):
     # print(kwargs)
     _data_list = fill_df(contours, **kwargs)
 
-    contours_filtered = filter_contour(contours)
+    _contours_filtered = filter_contour(contours)
 
     # blank canvas
     # drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
-    # draw_ellipse(drawing, contours_filtered)
+    # draw_ellipse(drawing, _contours_filtered)
 
     # cv.imshow("source", output)
     # cv.imshow("drawing", drawing)
@@ -151,7 +151,7 @@ def morphology_operations(*args, **kwargs):
     #                                                                                      kwargs['morph_k_size'],
     #                                                                                     kwargs['canny_threshold']))
     # print("*" * 30)
-    return contours_filtered, _data_list, len(contours)
+    return _contours_filtered, _data_list, len(contours)
 
 
 result_window = "results"
@@ -161,7 +161,7 @@ result_window = "results"
 # folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
 # folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
 folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
-#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\exp1"
+# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\exp1"
 # folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\exp2"
 
 logger.info("Folder Name :{}".format(folder_path))
@@ -175,12 +175,12 @@ def calculate_minimum_area(contours):
         return 0
 
     _area_diff_min = []
-    for i, c in enumerate(contours):
+    for _, c in enumerate(contours):
         try:
             convex_hull = cv.convexHull(c)
             area_hull = cv.contourArea(convex_hull)
             minEllipse = cv.fitEllipse(c)
-            (x, y), (MA, ma), angle = minEllipse
+            (_, _), (MA, ma), angle = minEllipse
             area_ellipse = (np.pi / 4) * MA * ma
             area_diff_contour = np.abs(area_hull - area_ellipse)
             # print("hull area - {}, ellipse area - {}, area_diff - {}".format(area_hull,area_ellipse,area_diff_contour))
@@ -189,6 +189,9 @@ def calculate_minimum_area(contours):
             print("Division by zero for contour {}, {}".format(i, c))
 
     return min(_area_diff_min)
+
+
+
 
 
 if __name__ == '__main__':
