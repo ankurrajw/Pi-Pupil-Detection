@@ -15,18 +15,6 @@ CANNY_THRESHOLD = 100
 MEDIAN_BLUR_K_SIZE = 10
 MORPH_K_SIZE = 1
 
-'''logger setup'''
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-ch = logging.FileHandler("../log_ellipse_fitting.log")
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
-logger.info("*" * 50)
-logger.info("EXPERIMENT START")
-
 
 def create_workspace():
     base_path = "/home/pi/Desktop/master-thesis-eye-tracking/Results/Ellipse/"
@@ -37,6 +25,28 @@ def create_workspace():
         print("folder name", name_workspace)
 
     return name_workspace
+
+
+count = 0
+ellipse_detected = 0
+multiple_ellipses = 0
+fps_start_time = 0
+fps = 0
+total_images = 600
+folder_name = create_workspace()
+
+
+'''logger setup'''
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.FileHandler(f"{folder_name}/log_ellipse_fitting.log")
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+logger.info("*" * 50)
+logger.info("EXPERIMENT START")
 
 
 def filter_contour(_contours):
@@ -88,16 +98,8 @@ def draw_ellipse_rgb(_image, _contours):
     return _image
 
 
-count = 0
-ellipse_detected = 0
-multiple_ellipses = 0
-fps_start_time = 0
-fps = 0
-total_images = 600
-folder_name = create_workspace()
-
+logger.info(f"Values for Canny -{CANNY_THRESHOLD} Blur K size -{MEDIAN_BLUR_K_SIZE} Morph -{MORPH_K_SIZE}")
 while count < total_images:
-    logger.info(f"Values for Canny -{CANNY_THRESHOLD} Blur K size -{MEDIAN_BLUR_K_SIZE} Morph -{MORPH_K_SIZE}")
     ret, frame = cap.read()
     fps_end_time = time.time()
     time_diff = fps_end_time - fps_start_time
