@@ -107,7 +107,7 @@ while count < total_images:
     fps_start_time = fps_end_time
     fps_text = "FPS: {:.2f}".format(fps)
     if ret:
-        roi = frame[220:640, 0:480]
+        roi = frame[220:640, 0:480] # 0:420 if the eye is in upper portion of the frame
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
 
