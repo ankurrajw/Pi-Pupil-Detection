@@ -11,8 +11,8 @@ srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480,framerate=90/1 ! vid
 cap = cv.VideoCapture(srcPiCam)
 
 '''Change the parameters to conduct a real time detection'''
-CANNY_THRESHOLD = 100
-MEDIAN_BLUR_K_SIZE = 10
+CANNY_THRESHOLD = 26
+MEDIAN_BLUR_K_SIZE = 23
 MORPH_K_SIZE = 1
 
 # Time calculation
@@ -21,7 +21,7 @@ df_experiment = pd.DataFrame(columns=columns)
 
 
 def create_workspace():
-    base_path = "/home/pi/Desktop/master-thesis-eye-tracking/Results/Ellipse/"
+    base_path = "/home/ubicomp/Desktop/master-thesis-eye-tracking/Results/Ellipse/"
     time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     name_workspace = base_path + "Ellipse" + time_right_now + '/'
     if not os.path.exists(name_workspace):
@@ -36,7 +36,7 @@ ellipse_detected = 0
 multiple_ellipses = 0
 fps_start_time = 0
 fps = 0
-total_images = 600
+total_images = 30
 folder_name = create_workspace()
 
 '''logger setup'''
@@ -104,34 +104,49 @@ def draw_ellipse_rgb(_image, _contours):
 logger.info(f"Values for Canny -{CANNY_THRESHOLD} Blur K size -{MEDIAN_BLUR_K_SIZE} Morph -{MORPH_K_SIZE}")
 operation_find_contours = []
 operation_filter_contours = []
+operation_complete = []
+operation_pre_process = []
+operation_post_process = []
 while count < total_images:
+    start_operation_complete_timer = time.process_time()
     ret, frame = cap.read()
-    fps_end_time = time.time()
+    '''fps_end_time = time.time()
     time_diff = fps_end_time - fps_start_time
     fps = 1 / time_diff
     fps_start_time = fps_end_time
     fps_text = "FPS: {:.2f}".format(fps)
+    '''
     if ret:
-        roi = frame[220:640, 0:480]
+        # pre process
+        start_pre_process_timer = time.process_time()
+        roi = frame[0:420, 0:480]
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-
         src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
         kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
         opening = cv.morphologyEx(src_gray, cv.MORPH_OPEN, kernel)
-
         canny_output = cv.Canny(opening, CANNY_THRESHOLD, CANNY_THRESHOLD * 2)
+        end_pre_process_timer = time.process_time()
+        operation_pre_process.append(end_pre_process_timer - start_pre_process_timer)
+        
+        
 
         start_contour_timer = time.process_time()
         contours, _ = cv.findContours(canny_output, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         end_contour_timer = time.process_time()
         operation_find_contours.append(end_contour_timer - start_contour_timer)
+        
+        
 
         start_filter_timer = time.process_time()
         contours_filtered = filter_contour(contours)
         end_filter_timer = time.process_time()
         operation_filter_contours.append(end_filter_timer - start_filter_timer)
-
+        
+        
+        
+        # post process
+        start_post_process_timer = time.process_time()
         drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
         drawing = draw_ellipse(drawing, contours_filtered)
         cv.imwrite(folder_name + "ellipse" + str(count) + ".png", drawing)
@@ -143,7 +158,10 @@ while count < total_images:
         ellipse_detected += len(contours_filtered)
         if len(contours_filtered) > 1:
             multiple_ellipses += len(contours_filtered) - 1
-
+        end_post_process_timer = time.process_time()
+        operation_post_process.append(end_post_process_timer - start_post_process_timer)
+        end_operation_complete_timer = time.process_time()
+        operation_complete.append(end_operation_complete_timer - start_operation_complete_timer)
         count += 1
 
 cap.release()
@@ -162,5 +180,18 @@ df_find_contours = pd.DataFrame(
 df_filter_contours = pd.DataFrame(
     {'values': 'filter_contours', 'mean_time_taken(s)': np.mean(operation_filter_contours),
      'std(s)': np.std(operation_filter_contours)}, index=[0])
+df_operation_complete = pd.DataFrame(
+    {'values': 'operation_complete', 'mean_time_taken(s)': np.mean(operation_complete),
+     'std(s)': np.std(operation_complete)}, index=[0])
+df_operation_pre_process = pd.DataFrame(
+    {'values': 'pre_process', 'mean_time_taken(s)': np.mean(operation_pre_process),
+     'std(s)': np.std(operation_pre_process)}, index=[0])
+df_operation_post_process = pd.DataFrame(
+    {'values': 'post_process', 'mean_time_taken(s)': np.mean(operation_post_process),
+     'std(s)': np.std(operation_post_process)}, index=[0])
 df_experiment = pd.concat([df_experiment, df_find_contours], ignore_index=True)
 df_experiment = pd.concat([df_experiment, df_filter_contours], ignore_index=True)
+df_experiment = pd.concat([df_experiment, df_operation_complete], ignore_index=True)
+df_experiment = pd.concat([df_experiment, df_operation_pre_process], ignore_index=True)
+df_experiment = pd.concat([df_experiment, df_operation_post_process], ignore_index=True)
+print(df_experiment)
