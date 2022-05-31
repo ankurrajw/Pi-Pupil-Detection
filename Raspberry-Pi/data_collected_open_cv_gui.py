@@ -44,7 +44,7 @@ class data_collector:
 
     def collect_pics_experiment(self):
         name_workspace = data_collector.create_workspace(
-            r"/home/pi/Desktop/master-thesis-eye-tracking/test/")
+            r"/home/ubicomp/Desktop/master-thesis-eye-tracking/data-collection/")
         count = 0
         max_len_experiment = len(data_collector.landmarks)
         while count < max_len_experiment:
@@ -62,23 +62,27 @@ class data_collector:
         count_pics = 0
         while cap_pi.isOpened():  # or cap_usb
             self.led_on(True)
-            success, img = cap_pi.read()
+            ret, img = cap_pi.read()
             # success2, img2 = cap2.read()
             # time.sleep(0.5)
             time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S_%f")[:-3]
-            cv.imwrite(name_workspace + "imPi" + time_right_now + ".png", img)
-            # cv.imwrite("Results/imUSB" + str(count_pics) + ".png", img2)
-            count_pics = count_pics + 1
-            print(f"Pic Captured :{count_pics}")
-            if count_pics == self.num_pics_per_land_mark:  # change according to num pics needed
-                print("Completed")
-                self.led_on(False)
-                cap_pi.release()
-                # cap_usb.release()
+            if ret:
+                cv.imwrite(name_workspace + "imPi" + time_right_now + ".png", img)
+                # cv.imwrite("Results/imUSB" + str(count_pics) + ".png", img2)
+                count_pics = count_pics + 1
+                print(f"Pic Captured :{count_pics}")
+                if count_pics == self.num_pics_per_land_mark:  # change according to num pics needed
+                    print("Completed")
+                    self.led_on(False)
+                    cap_pi.release()
+                    # cap_usb.release()
+            if not ret:
+                print("frame empty")
+                continue
 
     @staticmethod
     def open_video_feed():
-        SRCPICAM = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink'
+        SRCPICAM = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
         cap_pi = cv.VideoCapture(SRCPICAM, cv.CAP_GSTREAMER)  # cv.CAP_GSTREAMER for linux
         cap_pi.set(cv.CAP_PROP_FPS, 90)
         """ change device parameter by checking the device id in v4l2
