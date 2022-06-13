@@ -15,8 +15,13 @@ CANNY_THRESHOLD = 26
 MEDIAN_BLUR_K_SIZE = 23
 MORPH_K_SIZE = 1
 
+RES_H = 640
+RES_W = 480
+ROI_FACTOR = 0.65
+
 # Time calculation
-columns = ('values', 'mean_time_taken(s)', 'std(s)')
+# columns = ('values', 'mean_time_taken(s)', 'std(s)')
+columns = ('pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
 df_experiment = pd.DataFrame(columns=columns)
 
 
@@ -27,8 +32,16 @@ def create_workspace():
     if not os.path.exists(name_workspace):
         os.makedirs(name_workspace)
         print("folder name", name_workspace)
-
     return name_workspace
+
+
+def create_directory_timing():
+    base_path = "./Timed_Experiment/"
+    path_dir = base_path + 'resolution'+str(RES_H)+str(RES_W)+"/"
+    if not os.path.exists(path_dir):
+        os.makedirs(path_dir)
+        print("folder name", path_dir)
+    return path_dir
 
 
 count = 0
@@ -119,7 +132,7 @@ while count < total_images:
     if ret:
         # pre process
         start_pre_process_timer = time.process_time()
-        roi = frame[0:420, 0:480]
+        roi = frame[0:ROI_FACTOR*RES_H, 0:RES_W]
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
         src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
@@ -128,23 +141,17 @@ while count < total_images:
         canny_output = cv.Canny(opening, CANNY_THRESHOLD, CANNY_THRESHOLD * 2)
         end_pre_process_timer = time.process_time()
         operation_pre_process.append(end_pre_process_timer - start_pre_process_timer)
-        
-        
 
         start_contour_timer = time.process_time()
         contours, _ = cv.findContours(canny_output, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         end_contour_timer = time.process_time()
         operation_find_contours.append(end_contour_timer - start_contour_timer)
-        
-        
 
         start_filter_timer = time.process_time()
         contours_filtered = filter_contour(contours)
         end_filter_timer = time.process_time()
         operation_filter_contours.append(end_filter_timer - start_filter_timer)
-        
-        
-        
+
         # post process
         start_post_process_timer = time.process_time()
         drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
@@ -173,6 +180,18 @@ logger.info("Ellipse Single Detected {}, Multiple Ellipse {}, Total Images {}, P
 logger.info("EXPERIMENT END")
 logger.info("*" * 50)
 
+
+# Filling time values
+df_experiment['pre_process'] = operation_pre_process
+df_experiment['find_contours'] = operation_find_contours
+df_experiment['filter_contours'] = operation_filter_contours
+df_experiment['post_process'] = operation_post_process
+df_experiment['operation_complete'] = operation_complete
+
+directory_timing = create_directory_timing()
+time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+df_experiment.to_csv(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}.csv", sep=',', index=False)
+'''
 # Time Calculation
 df_find_contours = pd.DataFrame(
     {'values': 'find_contours', 'mean_time_taken(s)': np.mean(operation_find_contours),
@@ -195,3 +214,4 @@ df_experiment = pd.concat([df_experiment, df_operation_complete], ignore_index=T
 df_experiment = pd.concat([df_experiment, df_operation_pre_process], ignore_index=True)
 df_experiment = pd.concat([df_experiment, df_operation_post_process], ignore_index=True)
 print(df_experiment)
+'''
