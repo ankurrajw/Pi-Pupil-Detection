@@ -19,6 +19,7 @@ class data_collector:
         self.window_width = window.shape[0]
         self.window_height = window.shape[1]
         self.num_pics_per_land_mark = num_pics
+        self.cap_pi = None
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(data_collector.PIN,GPIO.OUT)
@@ -58,13 +59,13 @@ class data_collector:
         print("Program Exit!!")
 
     def collect_pictures(self, name_workspace):
-        cap_pi, _ = data_collector.open_video_feed()
+        self.cap_pi, _ = data_collector.open_video_feed()
         count_pics = 0
-        while cap_pi.isOpened():  # or cap_usb
+        while self.cap_pi.isOpened():  # or cap_usb
             self.led_on(True)
-            ret, img = cap_pi.read()
+            ret, img = self.cap_pi.read()
             # success2, img2 = cap2.read()
-            # time.sleep(0.5)
+            time.sleep(0.01)
             time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S_%f")[:-3]
             if ret:
                 cv.imwrite(name_workspace + "imPi" + time_right_now + ".png", img)
@@ -74,17 +75,19 @@ class data_collector:
                 if count_pics == self.num_pics_per_land_mark:  # change according to num pics needed
                     print("Completed")
                     self.led_on(False)
-                    cap_pi.release()
+                    self.cap_pi.release()
+                    break
+                    
                     # cap_usb.release()
             if not ret:
                 print("frame empty")
                 continue
-
     @staticmethod
     def open_video_feed():
         SRCPICAM = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
-        cap_pi = cv.VideoCapture(SRCPICAM, cv.CAP_GSTREAMER)  # cv.CAP_GSTREAMER for linux
+        cap_pi = cv.VideoCapture(SRCPICAM)  # cv.CAP_GSTREAMER for linux
         cap_pi.set(cv.CAP_PROP_FPS, 90)
+        
         """ change device parameter by checking the device id in v4l2
         command v4l2-ctl --list-devices
         """
