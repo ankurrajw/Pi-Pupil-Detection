@@ -11,17 +11,23 @@ srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480,framerate=90/1 ! vid
 cap = cv.VideoCapture(srcPiCam)
 
 '''Change the parameters to conduct a real time detection'''
-CANNY_THRESHOLD = 26
-MEDIAN_BLUR_K_SIZE = 23
+CANNY_THRESHOLD = 24
+MEDIAN_BLUR_K_SIZE = 17
 MORPH_K_SIZE = 1
 
 RES_H = 640
 RES_W = 480
-ROI_FACTOR = 0.65
+ROI_FACTOR = 0.6
+
+'''
+RES_H = 640
+RES_W = 480
+ROI_FACTOR = 0.6
+'''
 
 # Time calculation
 # columns = ('values', 'mean_time_taken(s)', 'std(s)')
-columns = ('pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
+columns = ('bluring','pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
 df_experiment = pd.DataFrame(columns=columns)
 
 
@@ -49,7 +55,7 @@ ellipse_detected = 0
 multiple_ellipses = 0
 fps_start_time = 0
 fps = 0
-total_images = 30
+total_images = 60
 folder_name = create_workspace()
 
 '''logger setup'''
@@ -79,10 +85,10 @@ def filter_contour(_contours):
             convex_hull = cv.convexHull(c)
             area_hull = cv.contourArea(convex_hull)
             # print("{} area convex hull {}".format(i, area_hull))
-            if 600 < area_hull:  # filtering based on area
+            if 900 < area_hull < 3000:  # filtering based on area
                 circumference_hull = cv.arcLength(convex_hull, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
-                if 0.8 < circularity_hull:  # filtering based on circularity
+                if 0.9 < circularity_hull:  # filtering based on circularity
                     print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
                     _contours_filtered.append(convex_hull)
         except ZeroDivisionError:
@@ -99,7 +105,7 @@ def draw_ellipse(_drawing, _contours_filtered):
         (x, y), (MA, ma), angle = minEllipse[i]
         area_contour_hull = cv.contourArea(c)
         area_ellipse = (np.pi / 4) * MA * ma
-        print("Area Ellipse :{} Area Contour Hull :{}".format(area_ellipse, area_contour_hull))
+        #print("Area Ellipse :{} Area Contour Hull :{}".format(area_ellipse, area_contour_hull))
         cv.ellipse(_drawing, minEllipse[i], color=color, thickness=2)
     return _drawing
 
@@ -120,6 +126,7 @@ operation_filter_contours = []
 operation_complete = []
 operation_pre_process = []
 operation_post_process = []
+operation_bluring = []
 while count < total_images:
     start_operation_complete_timer = time.process_time()
     ret, frame = cap.read()
@@ -132,10 +139,14 @@ while count < total_images:
     if ret:
         # pre process
         start_pre_process_timer = time.process_time()
-        roi = frame[0:ROI_FACTOR*RES_H, 0:RES_W]
+        roi = frame[0:round(ROI_FACTOR*RES_H), 0:RES_W]
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-        src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
+        start_bluring_timer = time.process_time()
+        #src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
+        end_bluring_timer = time.process_time()
+        operation_bluring.append(end_bluring_timer - start_bluring_timer)
+        
         kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
         opening = cv.morphologyEx(src_gray, cv.MORPH_OPEN, kernel)
         canny_output = cv.Canny(opening, CANNY_THRESHOLD, CANNY_THRESHOLD * 2)
@@ -154,13 +165,13 @@ while count < total_images:
 
         # post process
         start_post_process_timer = time.process_time()
-        drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
-        drawing = draw_ellipse(drawing, contours_filtered)
-        cv.imwrite(folder_name + "ellipse" + str(count) + ".png", drawing)
+        #drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+        ##drawing = draw_ellipse(drawing, contours_filtered)
+        #cv.imwrite(folder_name + "ellipse" + str(count) + ".png", drawing)
 
         '''Comment if colour images are not needed'''
-        colour_image = draw_ellipse_rgb(roi, contours_filtered)
-        cv.imwrite(folder_name + "colour" + str(count) + ".png", colour_image)
+        #colour_image = draw_ellipse_rgb(roi, contours_filtered)
+        #cv.imwrite(folder_name + "colour" + str(count) + ".png", colour_image)
 
         ellipse_detected += len(contours_filtered)
         if len(contours_filtered) > 1:
@@ -187,6 +198,7 @@ df_experiment['find_contours'] = operation_find_contours
 df_experiment['filter_contours'] = operation_filter_contours
 df_experiment['post_process'] = operation_post_process
 df_experiment['operation_complete'] = operation_complete
+df_experiment['bluring'] = operation_bluring
 
 directory_timing = create_directory_timing()
 time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
