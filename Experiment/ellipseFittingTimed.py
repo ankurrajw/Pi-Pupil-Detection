@@ -119,6 +119,13 @@ def draw_ellipse_rgb(_image, _contours):
         cv.ellipse(_image, minEllipse[i], color=color, thickness=2)
     return _image
 
+def find_centre_pupil(_pupil_locations, _contours):
+    for i, c in enumerate(_contours):
+        M = cv.moments(c)
+        pupilX = int(M["m10"]/M["m00"])
+        pupilY = int(M["m01"]/M["m00"])
+        _pupil_locations.append(f'{pupilX},{pupilY}')
+    return _pupil_locations
 
 logger.info(f"Values for Canny -{CANNY_THRESHOLD} Blur K size -{MEDIAN_BLUR_K_SIZE} Morph -{MORPH_K_SIZE}")
 operation_find_contours = []
@@ -127,6 +134,7 @@ operation_complete = []
 operation_pre_process = []
 operation_post_process = []
 operation_bluring = []
+pupil_locations = []
 while count < total_images:
     start_operation_complete_timer = time.process_time()
     ret, frame = cap.read()
@@ -143,7 +151,7 @@ while count < total_images:
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
         start_bluring_timer = time.process_time()
-        #src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
+        src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
         end_bluring_timer = time.process_time()
         operation_bluring.append(end_bluring_timer - start_bluring_timer)
         
@@ -166,12 +174,13 @@ while count < total_images:
         # post process
         start_post_process_timer = time.process_time()
         #drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
-        ##drawing = draw_ellipse(drawing, contours_filtered)
+        #drawing = draw_ellipse(drawing, contours_filtered)
         #cv.imwrite(folder_name + "ellipse" + str(count) + ".png", drawing)
 
         '''Comment if colour images are not needed'''
         #colour_image = draw_ellipse_rgb(roi, contours_filtered)
         #cv.imwrite(folder_name + "colour" + str(count) + ".png", colour_image)
+        pupil_locations = find_centre_pupil(pupil_locations, contours_filtered)
 
         ellipse_detected += len(contours_filtered)
         if len(contours_filtered) > 1:
@@ -203,6 +212,11 @@ df_experiment['bluring'] = operation_bluring
 directory_timing = create_directory_timing()
 time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 df_experiment.to_csv(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}.csv", sep=',', index=False)
+
+with open(directory_timing+f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}_pupil_location.csv", 'w') as file:
+    for location in pupil_locations:
+        file.write(f'{location}\n')
+
 '''
 # Time Calculation
 df_find_contours = pd.DataFrame(
