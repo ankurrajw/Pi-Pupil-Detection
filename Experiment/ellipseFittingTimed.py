@@ -7,12 +7,11 @@ import random as rng
 import logging
 import pandas as pd
 
-srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480,framerate=90/1 ! videoflip method=clockwise ! videoconvert ! appsink'
-cap = cv.VideoCapture(srcPiCam)
+
 
 '''Change the parameters to conduct a real time detection'''
 CANNY_THRESHOLD = 24
-MEDIAN_BLUR_K_SIZE = 17
+MEDIAN_BLUR_K_SIZE = 7
 MORPH_K_SIZE = 1
 
 RES_H = 640
@@ -22,9 +21,12 @@ ROI_FACTOR = 0.6
 '''
 RES_H = 640
 RES_W = 480
+CANNY_THRESHOLD = 24
+MEDIAN_BLUR_K_SIZE = 17
 ROI_FACTOR = 0.6
 '''
-
+srcPiCam = f'libcamerasrc ! video/x-raw,width={RES_H},height={RES_W},framerate=90/1 ! videoflip method=clockwise ! videoconvert ! appsink'
+cap = cv.VideoCapture(srcPiCam)
 # Time calculation
 # columns = ('values', 'mean_time_taken(s)', 'std(s)')
 columns = ('bluring','pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
@@ -55,7 +57,7 @@ ellipse_detected = 0
 multiple_ellipses = 0
 fps_start_time = 0
 fps = 0
-total_images = 60
+total_images = 100
 folder_name = create_workspace()
 
 '''logger setup'''
@@ -78,18 +80,18 @@ def filter_contour(_contours):
     ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
     th_value since we don't deal with discritised pixels """
     _contours_filtered = []
-    print("Initial Contours : {}".format(len(_contours)))
-    print("Filtered Contours:")
+    #print("Initial Contours : {}".format(len(_contours)))
+    #print("Filtered Contours:")
     for i, c in enumerate(_contours):
         try:
             convex_hull = cv.convexHull(c)
             area_hull = cv.contourArea(convex_hull)
             # print("{} area convex hull {}".format(i, area_hull))
-            if 900 < area_hull < 3000:  # filtering based on area
+            if 1000 < area_hull < 2000:  # filtering based on area
                 circumference_hull = cv.arcLength(convex_hull, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
                 if 0.9 < circularity_hull:  # filtering based on circularity
-                    print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
+                    #print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
                     _contours_filtered.append(convex_hull)
         except ZeroDivisionError:
             print("Division by zero for contour {}".format(i))
@@ -120,11 +122,15 @@ def draw_ellipse_rgb(_image, _contours):
     return _image
 
 def find_centre_pupil(_pupil_locations, _contours):
+    minEllipse = [None] * len(_contours)
     for i, c in enumerate(_contours):
         M = cv.moments(c)
         pupilX = int(M["m10"]/M["m00"])
         pupilY = int(M["m01"]/M["m00"])
-        _pupil_locations.append(f'{pupilX},{pupilY}')
+        minEllipse[i] = cv.fitEllipse(c)
+        (x, y), (MA, ma), angle = minEllipse[i]
+        area_ellipse = (np.pi / 4) * MA * ma
+        _pupil_locations.append(f'{pupilX},{pupilY},{area_ellipse}')
     return _pupil_locations
 
 logger.info(f"Values for Canny -{CANNY_THRESHOLD} Blur K size -{MEDIAN_BLUR_K_SIZE} Morph -{MORPH_K_SIZE}")
