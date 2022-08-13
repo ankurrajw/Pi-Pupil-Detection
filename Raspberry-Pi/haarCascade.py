@@ -10,19 +10,19 @@ cap = cv2.VideoCapture(srcPiCam)
 count = 0
 while True:
     ret, frame = cap.read()
-    
-    if ret == True:
-        
+
+    if ret:
+
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         eyes = cv2.CascadeClassifier('haarcascade_eye.xml')
-        detected = eyes.detectMultiScale(frame, scaleFactor=1.0006,minNeighbors=1)
-        #print(detected)
+        detected = eyes.detectMultiScale(frame, scaleFactor=1.0006, minNeighbors=1)
+        # print(detected)
         pupilFrame = frame
-        for (ex,ey,eh,ew) in detected:
+        for (ex, ey, eh, ew) in detected:
             count = count + 1
-            cv2.rectangle(frame, (ex,ey), (ex+eh,ey+ew), (255,0,0), 3)
-            cv2.line(frame, (ex, ey), ((ex + ew, ey + eh)), (0, 0, 255), 1)  # draw cross
-            cv2.line(frame, (ex + ew, ey), ((ex, ey + eh)), (0, 0, 255), 1)
+            cv2.rectangle(frame, (ex, ey), (ex + eh, ey + ew), (255, 0, 0), 3)
+            cv2.line(frame, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 1)  # draw cross
+            cv2.line(frame, (ex + ew, ey), (ex, ey + eh), (0, 0, 255), 1)
             pupilFrame = cv2.equalizeHist(
                 frame[ey + int(eh * .25):(ey + eh), ex:(ex + ew)])
             cl1 = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -38,10 +38,10 @@ while True:
                     print("circle drawn")
 
                     cv2.rectangle(pupilFrame, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
-                    cv2.imwrite("circle"+str(count)+".png",pupilFrame)
+                    cv2.imwrite("circle" + str(count) + ".png", pupilFrame)
 
-        #cv2.imshow('original image', image)
-        #cv2.imshow('frame', pupilFrame)
+        # cv2.imshow('original image', image)
+        # cv2.imshow('frame', pupilFrame)
 
 if cv2.waitKey(0) & 0xFF == ord('q'):
     cv2.destroyAllWindows()
