@@ -6,16 +6,16 @@ import glob
 # Video capture from the raspberry pi
 srcPiCam = 'libcamerasrc ! video/x-raw,width=320,height=240,framerate=90/1 ! videoflip method=clockwise ! videoconvert ! appsink'
 cap = cv2.VideoCapture(srcPiCam)
+eyes = cv2.CascadeClassifier('haarcascade_eye.xml')
 
 count = 0
-while True:
+while count < 50:
     ret, frame = cap.read()
 
     if ret:
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        eyes = cv2.CascadeClassifier('haarcascade_eye.xml')
-        detected = eyes.detectMultiScale(frame, scaleFactor=1.0006, minNeighbors=1)
+        detected = eyes.detectMultiScale(frame, scaleFactor=1.0006, minSize=(30, 30), maxSize=(300, 300), minNeighbors=1)
         # print(detected)
         pupilFrame = frame
         for (ex, ey, eh, ew) in detected:
