@@ -13,6 +13,7 @@ import numpy as np
 import random as rng
 import os
 import logging
+import glob
 
 # create a logger with name of the file
 logger = logging.getLogger(__name__)
@@ -57,11 +58,18 @@ def filter_contour(contours):
             convex_hull = cv.convexHull(c)
             area_hull = cv.contourArea(convex_hull)
             # print("{} area convex hull {}".format(i, area_hull))
-            if 600 < area_hull:  # filtering based on area
+            if 100 < area_hull < 5000:  # filtering based on area
                 circumference_hull = cv.arcLength(convex_hull, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
                 if 0.8 < circularity_hull:  # filtering based on circularity
                     print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
+
+                    ''' calculation of center - 
+                    M = cv.moments(c)
+                    cx = int(M['m10'] / M['m00'])
+                    cy = int(M['m01'] / M['m00'])
+                    print(cx, cy)'''
+
                     contours_filtered.append(convex_hull)
         except ZeroDivisionError:
             print("Division by zero for contour {}".format(i))
@@ -71,9 +79,10 @@ def filter_contour(contours):
 def draw_ellipse(drawing, contours_filtered):
     minEllipse = [None] * len(contours_filtered)
     for i, c in enumerate(contours_filtered):
-        color = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
+        color_rng = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
+        color = (0, 255, 0)
         minEllipse[i] = cv.fitEllipse(c)
-        cv.drawContours(drawing, contours_filtered, i, color)
+        cv.drawContours(drawing, contours_filtered, i, color_rng)
         (x, y), (MA, ma), angle = minEllipse[i]
         area_contour_hull = cv.contourArea(c)
         area_ellipse = (np.pi / 4) * MA * ma
@@ -84,7 +93,7 @@ def draw_ellipse(drawing, contours_filtered):
 def morphology_operations(val):
     """Get Trackbar positions"""
 
-    roi = src_image[220:640, 0:480]
+    roi = src_image[0:420, 0:480]
     output = roi.copy()
     src_gray_original = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
     src_gray = src_gray_original.copy()
@@ -95,8 +104,11 @@ def morphology_operations(val):
         median_blur_th += 1
         cv.setTrackbarPos(median_blur, window_name, median_blur_th)
         src_gray = cv.medianBlur(src_gray, median_blur_th)
+        #src_gray = cv.GaussianBlur(src_gray, (median_blur_th, median_blur_th), 0)
     else:
         src_gray = cv.medianBlur(src_gray, median_blur_th)
+        #src_gray = cv.GaussianBlur(src_gray, (median_blur_th, median_blur_th), 0)
+        pass
 
     # Opening operation
     kernel_size_th = cv.getTrackbarPos(morph_operations_kernel_size, window_name)
@@ -120,9 +132,11 @@ def morphology_operations(val):
     # blank canvas
     drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
     draw_ellipse(drawing, contours_filtered)
+    draw_ellipse(output, contours_filtered)
 
     cv.imshow("source", output)
     cv.imshow("drawing", drawing)
+    cv.imshow("roi", roi)
     cv.imshow(result_window, canny_output)
 
     print("*" * 30)
@@ -146,23 +160,26 @@ cv.createTrackbar(morph_operations_kernel_size, window_name, morph_value, morph_
 
 result_window = "results"
 
-# src_image = cv.imread(
-#    r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
+#src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
 
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
+folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Report\Experiment\Parameter_estimation\subject04"
+#folder_path = r"C:\Users\Ankur\sciebo\Master Thesis Eye Detection\User Data\subject05\data_free_movement\Data_Pupil_Capture20_07_2022_15_26_16"
+#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
+#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\testing\subject00"
 
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
+folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\testing\subject03\Data_Marker_Location\Data_Pupil_Capture13_06_2022_16_23_42"
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0
 multiple_ellipses = 0
 total_images = len(os.listdir(folder_path))
 
-for path in os.listdir(folder_path):
-    src_image_name = os.path.join(folder_path, path)
-    print("Image Name {}".format(src_image_name))
-    src_image = cv.imread(src_image_name)
+src_image = cv.imread(r"C:\Users\Ankur\Desktop\Data_Pupil_Capture08_04_2022_14_52_01\imPi08_04_2022_14_52_08_607.png")
+
+src_image_folder_path = os.path.join(folder_path, '[imPi]*.png')
+for image_name in glob.iglob(src_image_folder_path):
+
+    print("Image Name {}".format(image_name))
+    src_image = cv.imread(image_name)
     key = cv.waitKey(0)
     """TODO: cHECK FORMULA FOR MULTIPLE ELLIPSE CALCULATION"""
     len_contours_filtered = morphology_operations(0)
