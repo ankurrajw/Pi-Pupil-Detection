@@ -27,23 +27,20 @@ logger = create_logger()
 MEDIAN_BLUR_K_SIZE_VALUES = [7, 9, 11, 13, 15, 17, 19, 21, 23]
 
 MORPH_VALUES = 1
+MIN_AREA_HULL = 400
+MAX_AREA_HULL = 1000
+MIN_CIRCULARITY = 0.9
 
-# CANNY_THRESHOLD_VALUES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]  # list for canny values
 CANNY_THRESHOLD_VALUES = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 35, 40, 55, 60, 65,
                           70]  # list for canny values
 columns = ('image_name', 'threshold_canny', 'kernel_size_blur', 'area_convex_hull', 'area_ellipse',
            'circularity_hull')
 
-# dataframe
+# dataframe experiment
 df_experiment = pd.DataFrame(columns=columns)
 
 
 def filter_contour(contours):
-    """TODO filter contours to get ellipses based on area and circularity
-    DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
-    from contour ?
-    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
-    th_value since we don't deal with discritised pixels """
     _contours_filtered = []
     # print("Initial Contours : {}".format(len(contours)))
     # print("Filtered Contours:")
@@ -52,10 +49,10 @@ def filter_contour(contours):
             convex_hull = cv.convexHull(c)
             area_hull = cv.contourArea(convex_hull)
             # print("{} area convex hull {}".format(i, area_hull))
-            if 600 < area_hull:  # filtering based on area
+            if MIN_AREA_HULL < area_hull < MAX_AREA_HULL:  # filtering based on area
                 circumference_hull = cv.arcLength(convex_hull, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
-                if 0.8 < circularity_hull:  # filtering based on circularity
+                if MIN_CIRCULARITY < circularity_hull:  # filtering based on circularity
                     # print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
                     _contours_filtered.append(c)
         except ZeroDivisionError:
@@ -84,12 +81,12 @@ def fill_df(contours, **kwargs):
             area_hull = cv.contourArea(convex_hull)
             # area_contour = cv.contourArea(c)
             # print("{} area convex hull {}".format(i, area_hull))
-            if 600 < area_hull:  # filtering based on area
+            if MIN_AREA_HULL < area_hull < MAX_AREA_HULL:  # filtering based on area
                 circumference_hull = cv.arcLength(convex_hull, True)
                 circumference_contour = cv.arcLength(c, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
                 # circularity_contour = (4 * np.pi * area_contour) / circumference_hull ** 2
-                if 0.8 < circularity_hull:  # filtering based on circularity
+                if MIN_CIRCULARITY < circularity_hull:  # filtering based on circularity
                     minEllipse = cv.fitEllipse(c)
                     (x, y), (MA, ma), angle = minEllipse
                     area_contour_hull = cv.contourArea(c)
@@ -116,7 +113,7 @@ def morphology_operations(*args, **kwargs):
     :param **kwargs:
     """
 
-    roi = src_image[220:640, 0:480]
+    roi = src_image[0:420, 0:480]
     output = roi.copy()
     src_gray_original = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
     src_gray = src_gray_original.copy()
@@ -156,13 +153,7 @@ def morphology_operations(*args, **kwargs):
 
 result_window = "results"
 
-# src_image = cv.imread(
-#    r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\exp1"
-# folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\exp2"
+folder_path = r"C:\Users\Ankur\Desktop\Data_Pupil_Capture09_04_2022_12_23_51"
 
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0
@@ -189,9 +180,6 @@ def calculate_minimum_area(contours):
             print("Division by zero for contour {}, {}".format(i, c))
 
     return min(_area_diff_min)
-
-
-
 
 
 if __name__ == '__main__':
