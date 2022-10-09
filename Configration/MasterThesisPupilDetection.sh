@@ -1,17 +1,17 @@
 #!/bin/sh
 
-# software instrallation for Raspberry Pi 4
+# software package for Pi-Pupil-Detection (Raspberry Pi 4)
 clear
 echo "Updating OS"
 echo "========================================="
 sudo apt update upgrade
-echo "instralling open cv python"
+echo "installing open cv python"
 echo "========================================="
 sudo apt install libopencv-dev python3-opencv -y
-echo "instralling gstreamer librearies"
+echo "installing gstreamer librearies"
 echo "========================================="
 sudo apt-get install libx264-dev libjpeg-dev -y
-echo "instralling gstreamer"
+echo "installing gstreamer"
 echo "========================================="
 sudo apt-get install libgstreamer1.0-dev \
      libgstreamer-plugins-base1.0-dev \
@@ -22,7 +22,7 @@ sudo apt-get install libgstreamer1.0-dev \
      gstreamer1.0-gtk3 -y
 sudo apt-get install gstreamer1.0-qt5 -y
 sudo apt-get install gstreamer1.0-pulseaudio -y
-echo "instralling git"
+echo "installing git"
 echo "========================================="
 sudo apt install git-all -y
 sudo apt install git-gui -y
