@@ -7,8 +7,6 @@ import os
 import RPi.GPIO as GPIO
 
 
-
-
 class data_collector:
     landmarks = [(0.1, 0.1), (0.1, 0.9), (0.5, 0.5), (0.9, 0.9), (0.9, 0.1)]
     length = 20
@@ -22,7 +20,7 @@ class data_collector:
         self.cap_pi = None
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-        GPIO.setup(data_collector.PIN,GPIO.OUT)
+        GPIO.setup(data_collector.PIN, GPIO.OUT)
         pass
 
     def add_cross(self):
@@ -77,17 +75,18 @@ class data_collector:
                     self.led_on(False)
                     self.cap_pi.release()
                     break
-                    
+
                     # cap_usb.release()
             if not ret:
                 print("frame empty")
                 continue
+
     @staticmethod
     def open_video_feed():
         SRCPICAM = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
         cap_pi = cv.VideoCapture(SRCPICAM)  # cv.CAP_GSTREAMER for linux
         cap_pi.set(cv.CAP_PROP_FPS, 90)
-        
+
         """ change device parameter by checking the device id in v4l2
         command v4l2-ctl --list-devices
         """
@@ -104,13 +103,13 @@ class data_collector:
             os.makedirs(name_workspace)
             print("folder name", name_workspace)
         return name_workspace
-    
-    def led_on(self,status):
-        
+
+    def led_on(self, status):
+
         if (status):
-            GPIO.output(data_collector.PIN,GPIO.HIGH)
+            GPIO.output(data_collector.PIN, GPIO.HIGH)
         else:
-            GPIO.output(data_collector.PIN,GPIO.LOW)
+            GPIO.output(data_collector.PIN, GPIO.LOW)
 
 
 if __name__ == '__main__':
