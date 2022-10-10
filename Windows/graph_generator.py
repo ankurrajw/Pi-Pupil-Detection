@@ -3,8 +3,8 @@ import pandas as pd
 import os
 import glob
 
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\testing_graph"
 
+folder_path = r'C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Report\Experiment\Parameter_estimation\closedeye'
 
 def graph_generation(path):
     """Generate graph for experimentation
@@ -12,8 +12,8 @@ def graph_generation(path):
     2. sigma
     """
 
-    path_mean = glob.glob(path+r'\*loss_mean_*.csv')
-    path_sigma = glob.glob(path+r'\*loss_sigma_*.csv')
+    path_mean = glob.glob(path + r'\*loss_mean_*.csv')
+    path_sigma = glob.glob(path + r'\*loss_sigma_*.csv')
 
     if len(path_sigma) > 1 or len(path_mean) > 1:
         print('more than one files for threshold calculation')
@@ -38,7 +38,7 @@ def graph_generation(path):
     ax[1].legend(title="kernel size", loc='center left', bbox_to_anchor=(1, 0.5))
 
     fig.suptitle(f'File name - {os.path.basename(path_mean[0])} & {os.path.basename(path_sigma[0])}', fontsize=16)
-    plt.savefig(path+'/graph_loss_mean_sigma.png', bbox_inches='tight')
+    plt.savefig(path + '/graph_loss_mean_sigma.png', bbox_inches='tight')
     plt.show()
 
 

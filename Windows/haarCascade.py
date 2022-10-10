@@ -5,16 +5,17 @@ import glob
 
 # Video capture from the raspberry pi
 
-image = cv2.imread("../Results/OldImages/imPi24.png")
+
+image = cv2.imread("../Results/infrared/hough_circle229.png")
 frame = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 eyes = cv2.CascadeClassifier('haarcascade_eye_right2split.xml')
-detected = eyes.detectMultiScale(frame, scaleFactor=1.0006,minNeighbors=1)
+detected = eyes.detectMultiScale(frame, scaleFactor=1.0006, minSize=(100,100), minNeighbors=1)
 print(detected)
 pupilFrame = frame
-for (ex,ey,eh,ew) in detected:
-    cv2.rectangle(frame, (ex,ey), (ex+eh,ey+ew), (255,0,0), 3)
-    cv2.line(frame, (ex, ey), ((ex + ew, ey + eh)), (0, 0, 255), 1)  # draw cross
-    cv2.line(frame, (ex + ew, ey), ((ex, ey + eh)), (0, 0, 255), 1)
+for (ex, ey, eh, ew) in detected:
+    cv2.rectangle(frame, (ex,ey), (ex+eh, ey+ew), (255,0,0), 3)
+    cv2.line(frame, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 1)  # draw cross
+    cv2.line(frame, (ex + ew, ey), (ex, ey + eh), (0, 0, 255), 1)
     pupilFrame = cv2.equalizeHist(
         frame[ey + int(eh * .25):(ey + eh), ex:(ex + ew)])
     cl1 = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
