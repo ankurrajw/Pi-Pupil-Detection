@@ -7,8 +7,6 @@ import random as rng
 import logging
 import pandas as pd
 
-
-
 '''Change the parameters to conduct a real time detection'''
 CANNY_THRESHOLD = 24
 MEDIAN_BLUR_K_SIZE = 7
@@ -29,7 +27,7 @@ srcPiCam = f'libcamerasrc ! video/x-raw,width={RES_H},height={RES_W},framerate=9
 cap = cv.VideoCapture(srcPiCam)
 # Time calculation
 # columns = ('values', 'mean_time_taken(s)', 'std(s)')
-columns = ('bluring','pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
+columns = ('bluring', 'pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
 df_experiment = pd.DataFrame(columns=columns)
 
 
@@ -45,7 +43,7 @@ def create_workspace():
 
 def create_directory_timing():
     base_path = "./Timed_Experiment/"
-    path_dir = base_path + 'resolution'+str(RES_H)+str(RES_W)+"/"
+    path_dir = base_path + 'resolution' + str(RES_H) + str(RES_W) + "/"
     if not os.path.exists(path_dir):
         os.makedirs(path_dir)
         print("folder name", path_dir)
@@ -80,8 +78,8 @@ def filter_contour(_contours):
     ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
     th_value since we don't deal with discritised pixels """
     _contours_filtered = []
-    #print("Initial Contours : {}".format(len(_contours)))
-    #print("Filtered Contours:")
+    # print("Initial Contours : {}".format(len(_contours)))
+    # print("Filtered Contours:")
     for i, c in enumerate(_contours):
         try:
             convex_hull = cv.convexHull(c)
@@ -91,7 +89,7 @@ def filter_contour(_contours):
                 circumference_hull = cv.arcLength(convex_hull, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
                 if 0.9 < circularity_hull:  # filtering based on circularity
-                    #print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
+                    # print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
                     _contours_filtered.append(convex_hull)
         except ZeroDivisionError:
             print("Division by zero for contour {}".format(i))
@@ -107,7 +105,7 @@ def draw_ellipse(_drawing, _contours_filtered):
         (x, y), (MA, ma), angle = minEllipse[i]
         area_contour_hull = cv.contourArea(c)
         area_ellipse = (np.pi / 4) * MA * ma
-        #print("Area Ellipse :{} Area Contour Hull :{}".format(area_ellipse, area_contour_hull))
+        # print("Area Ellipse :{} Area Contour Hull :{}".format(area_ellipse, area_contour_hull))
         cv.ellipse(_drawing, minEllipse[i], color=color, thickness=2)
     return _drawing
 
@@ -121,17 +119,19 @@ def draw_ellipse_rgb(_image, _contours):
         cv.ellipse(_image, minEllipse[i], color=color, thickness=2)
     return _image
 
+
 def find_centre_pupil(_pupil_locations, _contours):
     minEllipse = [None] * len(_contours)
     for i, c in enumerate(_contours):
         M = cv.moments(c)
-        pupilX = int(M["m10"]/M["m00"])
-        pupilY = int(M["m01"]/M["m00"])
+        pupilX = int(M["m10"] / M["m00"])
+        pupilY = int(M["m01"] / M["m00"])
         minEllipse[i] = cv.fitEllipse(c)
         (x, y), (MA, ma), angle = minEllipse[i]
         area_ellipse = (np.pi / 4) * MA * ma
         _pupil_locations.append(f'{pupilX},{pupilY},{area_ellipse}')
     return _pupil_locations
+
 
 logger.info(f"Values for Canny -{CANNY_THRESHOLD} Blur K size -{MEDIAN_BLUR_K_SIZE} Morph -{MORPH_K_SIZE}")
 operation_find_contours = []
@@ -153,14 +153,14 @@ while count < total_images:
     if ret:
         # pre process
         start_pre_process_timer = time.process_time()
-        roi = frame[0:round(ROI_FACTOR*RES_H), 0:RES_W]
+        roi = frame[0:round(ROI_FACTOR * RES_H), 0:RES_W]
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
         start_bluring_timer = time.process_time()
         src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
         end_bluring_timer = time.process_time()
         operation_bluring.append(end_bluring_timer - start_bluring_timer)
-        
+
         kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
         opening = cv.morphologyEx(src_gray, cv.MORPH_OPEN, kernel)
         canny_output = cv.Canny(opening, CANNY_THRESHOLD, CANNY_THRESHOLD * 2)
@@ -179,13 +179,13 @@ while count < total_images:
 
         # post process
         start_post_process_timer = time.process_time()
-        #drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
-        #drawing = draw_ellipse(drawing, contours_filtered)
-        #cv.imwrite(folder_name + "ellipse" + str(count) + ".png", drawing)
+        # drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+        # drawing = draw_ellipse(drawing, contours_filtered)
+        # cv.imwrite(folder_name + "ellipse" + str(count) + ".png", drawing)
 
         '''Comment if colour images are not needed'''
-        #colour_image = draw_ellipse_rgb(roi, contours_filtered)
-        #cv.imwrite(folder_name + "colour" + str(count) + ".png", colour_image)
+        # colour_image = draw_ellipse_rgb(roi, contours_filtered)
+        # cv.imwrite(folder_name + "colour" + str(count) + ".png", colour_image)
         pupil_locations = find_centre_pupil(pupil_locations, contours_filtered)
 
         ellipse_detected += len(contours_filtered)
@@ -206,7 +206,6 @@ logger.info("Ellipse Single Detected {}, Multiple Ellipse {}, Total Images {}, P
 logger.info("EXPERIMENT END")
 logger.info("*" * 50)
 
-
 # Filling time values
 df_experiment['pre_process'] = operation_pre_process
 df_experiment['find_contours'] = operation_find_contours
@@ -217,9 +216,11 @@ df_experiment['bluring'] = operation_bluring
 
 directory_timing = create_directory_timing()
 time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-df_experiment.to_csv(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}.csv", sep=',', index=False)
+df_experiment.to_csv(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}.csv",
+                     sep=',', index=False)
 
-with open(directory_timing+f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}_pupil_location.csv", 'w') as file:
+with open(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}_pupil_location.csv",
+          'w') as file:
     for location in pupil_locations:
         file.write(f'{location}\n')
 
