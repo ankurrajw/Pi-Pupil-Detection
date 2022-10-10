@@ -16,18 +16,11 @@ RES_H = 640
 RES_W = 480
 ROI_FACTOR = 0.6
 
-'''
-RES_H = 640
-RES_W = 480
-CANNY_THRESHOLD = 24
-MEDIAN_BLUR_K_SIZE = 17
-ROI_FACTOR = 0.6
-'''
+
 srcPiCam = f'libcamerasrc ! video/x-raw,width={RES_H},height={RES_W},framerate=90/1 ! videoflip method=clockwise ! videoconvert ! appsink'
 cap = cv.VideoCapture(srcPiCam)
-# Time calculation
-# columns = ('values', 'mean_time_taken(s)', 'std(s)')
-columns = ('bluring', 'pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
+
+columns = ('blurring', 'pre_process', 'find_contours', 'filter_contours', 'post_process', 'operation_complete')
 df_experiment = pd.DataFrame(columns=columns)
 
 
@@ -72,11 +65,6 @@ logger.info("EXPERIMENT START")
 
 
 def filter_contour(_contours):
-    """TODO filter contours to get ellipses based on area and circularity
-    DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
-    from contour ?
-    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
-    th_value since we don't deal with discritised pixels """
     _contours_filtered = []
     # print("Initial Contours : {}".format(len(_contours)))
     # print("Filtered Contours:")
@@ -139,8 +127,9 @@ operation_filter_contours = []
 operation_complete = []
 operation_pre_process = []
 operation_post_process = []
-operation_bluring = []
+operation_blurring = []
 pupil_locations = []
+
 while count < total_images:
     start_operation_complete_timer = time.process_time()
     ret, frame = cap.read()
@@ -156,10 +145,10 @@ while count < total_images:
         roi = frame[0:round(ROI_FACTOR * RES_H), 0:RES_W]
         output = roi.copy()
         src_gray = cv.cvtColor(roi, cv.COLOR_BGR2GRAY)
-        start_bluring_timer = time.process_time()
+        start_blurring_timer = time.process_time()
         src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
-        end_bluring_timer = time.process_time()
-        operation_bluring.append(end_bluring_timer - start_bluring_timer)
+        end_blurring_timer = time.process_time()
+        operation_blurring.append(end_blurring_timer - start_blurring_timer)
 
         kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
         opening = cv.morphologyEx(src_gray, cv.MORPH_OPEN, kernel)
@@ -212,8 +201,10 @@ df_experiment['find_contours'] = operation_find_contours
 df_experiment['filter_contours'] = operation_filter_contours
 df_experiment['post_process'] = operation_post_process
 df_experiment['operation_complete'] = operation_complete
-df_experiment['bluring'] = operation_bluring
+df_experiment['blurring'] = operation_blurring
 
+
+# save experiment file
 directory_timing = create_directory_timing()
 time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 df_experiment.to_csv(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{MEDIAN_BLUR_K_SIZE}.csv",
@@ -223,28 +214,3 @@ with open(directory_timing + f"Experiment_{time_right_now}_{CANNY_THRESHOLD}_{ME
           'w') as file:
     for location in pupil_locations:
         file.write(f'{location}\n')
-
-'''
-# Time Calculation
-df_find_contours = pd.DataFrame(
-    {'values': 'find_contours', 'mean_time_taken(s)': np.mean(operation_find_contours),
-     'std(s)': np.std(operation_find_contours)}, index=[0])
-df_filter_contours = pd.DataFrame(
-    {'values': 'filter_contours', 'mean_time_taken(s)': np.mean(operation_filter_contours),
-     'std(s)': np.std(operation_filter_contours)}, index=[0])
-df_operation_complete = pd.DataFrame(
-    {'values': 'operation_complete', 'mean_time_taken(s)': np.mean(operation_complete),
-     'std(s)': np.std(operation_complete)}, index=[0])
-df_operation_pre_process = pd.DataFrame(
-    {'values': 'pre_process', 'mean_time_taken(s)': np.mean(operation_pre_process),
-     'std(s)': np.std(operation_pre_process)}, index=[0])
-df_operation_post_process = pd.DataFrame(
-    {'values': 'post_process', 'mean_time_taken(s)': np.mean(operation_post_process),
-     'std(s)': np.std(operation_post_process)}, index=[0])
-df_experiment = pd.concat([df_experiment, df_find_contours], ignore_index=True)
-df_experiment = pd.concat([df_experiment, df_filter_contours], ignore_index=True)
-df_experiment = pd.concat([df_experiment, df_operation_complete], ignore_index=True)
-df_experiment = pd.concat([df_experiment, df_operation_pre_process], ignore_index=True)
-df_experiment = pd.concat([df_experiment, df_operation_post_process], ignore_index=True)
-print(df_experiment)
-'''
