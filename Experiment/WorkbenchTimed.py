@@ -50,11 +50,6 @@ df_experiment = pd.DataFrame(columns=columns)
 
 
 def filter_contour(contours):
-    """TODO filter contours to get ellipses based on area and circularity
-    DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
-    from contour ?
-    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
-    th_value since we don't deal with discritised pixels """
     contours_filtered = []
     print("Initial Contours : {}".format(len(contours)))
     print("Filtered Contours:")
