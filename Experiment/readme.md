@@ -1,2 +1,3 @@
 # Experimentation files for rasberry pi
-Here we would like to perfrom time calculation for each process
+
+Time calculation for each process during pupil detection on Pi.
