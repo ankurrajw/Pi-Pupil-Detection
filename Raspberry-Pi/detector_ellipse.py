@@ -50,11 +50,6 @@ logger.info("EXPERIMENT START")
 
 
 def filter_contour(_contours):
-    """TODO filter contours to get ellipses based on area and circularity
-    DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
-    from contour ?
-    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
-    th_value since we don't deal with discritised pixels """
     _contours_filtered = []
     print("Initial Contours : {}".format(len(_contours)))
     print("Filtered Contours:")
