@@ -153,7 +153,7 @@ def morphology_operations(*args, **kwargs):
 
 result_window = "results"
 
-folder_path = r"C:\Users\Ankur\Desktop\Data_Pupil_Capture09_04_2022_12_23_51"
+folder_path = r"PATH_FOLDER"
 
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0

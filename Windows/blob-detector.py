@@ -15,7 +15,7 @@ cv2.createTrackbar("Value : threshold", "image", 0, 255, demo)
 #cv2.createTrackbar("Value : threshold_canny canny 2","image", 0, 500, demo)
 
 
-folder_images = glob.glob(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results/OldImages/imPi*.png")
+folder_images = glob.glob(r"PATH_FOLDER_WITH_IMAGES")
 folder_images = sorted(folder_images)
 count = 0
 print(folder_images)

@@ -51,9 +51,7 @@ class pupilDetector:
 
 if __name__ == "__main__":
     frame = cv2.imread(
-        r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared\imPi21.png")
-    frame = cv2.imread(
-        r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Inference\SidePupilImages\hough_circle323.png")
+        r"PATH_FOLDER_IMAGE")
     detector = pupilDetector(frame=frame)
     circle, output_image = detector.houghCircle()
     if circle is not None:

@@ -20,7 +20,7 @@ class data_collector:
         self.fourcc = cv.VideoWriter_fourcc(*'DIVX')
         self.fps = 90.0
         self.frame_size = (640, 480)
-        self.base_path = r"/home/ubicomp/Desktop/master-thesis-eye-tracking/data-collection/"
+        self.base_path = r"PATH_FOLDER"
         self.PIPELINE = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
 
         GPIO.setmode(GPIO.BCM)

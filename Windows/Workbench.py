@@ -45,11 +45,6 @@ canny_threshold_value_max = 60
 
 
 def filter_contour(contours):
-    """TODO filter contours to get ellipses based on area and circularity
-    DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
-    from contour ?
-    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
-    th_value since we don't deal with discritised pixels """
     contours_filtered = []
     print("Initial Contours : {}".format(len(contours)))
     print("Filtered Contours:")
@@ -162,18 +157,13 @@ result_window = "results"
 
 #src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
 
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Report\Experiment\Parameter_estimation\subject04"
-#folder_path = r"C:\Users\Ankur\sciebo\Master Thesis Eye Detection\User Data\subject05\data_free_movement\Data_Pupil_Capture20_07_2022_15_26_16"
-#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
-#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\testing\subject00"
-
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\testing\subject03\Data_Marker_Location\Data_Pupil_Capture13_06_2022_16_23_42"
+folder_path = r"PATH_FOLDER"
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0
 multiple_ellipses = 0
 total_images = len(os.listdir(folder_path))
 
-src_image = cv.imread(r"C:\Users\Ankur\Desktop\Data_Pupil_Capture08_04_2022_14_52_01\imPi08_04_2022_14_52_08_607.png")
+src_image = cv.imread(r"PATH_IMAGE_FOLDER")
 
 src_image_folder_path = os.path.join(folder_path, '[imPi]*.png')
 for image_name in glob.iglob(src_image_folder_path):

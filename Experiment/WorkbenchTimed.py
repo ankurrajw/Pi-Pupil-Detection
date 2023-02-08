@@ -155,19 +155,15 @@ cv.createTrackbar(morph_operations_kernel_size, window_name, morph_value, morph_
 
 result_window = "results"
 
-#src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle360.png")
 
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18"
-#folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Data\Data_Pupil_Capture11_03_2022_14_49_02"
-#folder_path = r'C:\Users\Ankur\Desktop\Data_Pupil_Capture08_04_2022_14_52_01'
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared"
-folder_path = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Inference\SidePupilImages"
+folder_path = r"PATH_FOLDER"
+
 logger.info("Folder Name :{}".format(folder_path))
 ellipse_detected = 0
 multiple_ellipses = 0
 total_images = len(os.listdir(folder_path))
 
-src_image = cv.imread(r"C:\Users\Ankur\Desktop\Data_Pupil_Capture08_04_2022_14_52_01\imPi08_04_2022_14_52_08_607.png")
+src_image = cv.imread(r"IMAGE_PATH")
 
 
 for path in os.listdir(folder_path):

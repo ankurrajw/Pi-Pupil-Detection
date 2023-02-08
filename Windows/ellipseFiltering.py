@@ -8,11 +8,6 @@ print("*" * 30)
 
 
 def filter_contour(contours):
-    '''TODO filter contours to get ellipses based on area and circularity
-    DOCUMENTATION : Why we need to do a convex hull operation on the contour instead of finding the circularity directly
-    from contour ?
-    ANS: Since pixels of contour leads to a higher th_value of circularity > 200. Doing a convex hull leads to a lower
-    th_value since we don't deal with discritised pixels '''
     contours_filtered = []
     print("Initial Contours : {}".format(len(contours)))
     print("Filtered Contours")
@@ -34,9 +29,7 @@ def filter_contour(contours):
     # print("Circularity {} {}".format(i, circularity))
 
 
-#src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared\imPi21.png")
-#src_image = cv.imread(r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Inference\SidePupilImages\hough_circle338.png")
-src_image = cv.imread( r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Hough21_01_2022_16_01_18\hough_circle363.png")
+src_image = cv.imread( r"PATH_FOLDER")
 
 roi = src_image[220:640, 0:480]
 output = roi.copy()

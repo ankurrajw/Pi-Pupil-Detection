@@ -17,7 +17,7 @@ MORPH_K_SIZE = 1
 
 
 def create_workspace():
-    base_path = "/home/pi/Desktop/master-thesis-eye-tracking/Results/Ellipse/"
+    base_path = "PATH_FOLDER"
     time_right_now = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
     name_workspace = base_path + "Ellipse" + time_right_now + '/'
     if not os.path.exists(name_workspace):

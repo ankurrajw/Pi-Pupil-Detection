@@ -4,7 +4,7 @@ import os
 import glob
 
 
-folder_path = r'C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Report\Experiment\Parameter_estimation\closedeye'
+folder_path = r'PATH_FOLDER'
 
 def graph_generation(path):
     """Generate graph for experimentation

@@ -42,8 +42,7 @@ class data_collector:
                 round(loc[0] * self.window_height) + data_collector.length)
 
     def collect_pics_experiment(self):
-        name_workspace = data_collector.create_workspace(
-            r"/home/ubicomp/Desktop/master-thesis-eye-tracking/data-collection/")
+        name_workspace = data_collector.create_workspace(r"PATH")
         count = 0
         max_len_experiment = len(data_collector.landmarks)
         while count < max_len_experiment:

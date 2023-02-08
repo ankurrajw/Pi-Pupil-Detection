@@ -1,6 +1,4 @@
 """
-Author : Ankur Raj
-
 This approach of pupil detection is based on detection using threshold_canny.
 
 Input An image of pupil (480*640)

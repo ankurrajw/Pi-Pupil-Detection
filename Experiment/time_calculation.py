@@ -4,8 +4,7 @@ import glob
 import pandas as pd
 import numpy as np
 np.set_printoptions(suppress=True)
-folder_name = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\infrared\*.png"
-# folder_name = r"C:\Users\Ankur\Desktop\Uni Siegen\SEM5\Eye Detection\Project-code-Ankur\master-thesis-eye-tracking\Results\Inference\SidePupilImages\*.png"
+folder_name = r"PATH_FOLDER_IMAGE"
 folder_images = glob.glob(folder_name)
 folder_images = sorted(folder_images)
 columns = ('values', 'mean_time_taken(s)', 'std(s)')
