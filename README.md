@@ -2,7 +2,7 @@
 This repository contains code from the paper: 
 Ankur Raj, Diwas Bhattarai, & Kristof Van Laerhoven (2023), "An Embedded and Real-Time Pupil Detection Pipeline". https://doi.org/10.5281/zenodo.7682640
 
-And from my thesis: *Embedded Pupil Detection on a Raspberry Pi-based Wearable System*.
+And from my thesis: *Embedded Pupil Detection on a Raspberry Pi-based Wearable System* at the Ubiquitous Computing Lab at the University of Siegen, Germany.
 
 ## Step 1: Build your own Eye-Tracker
 Our open-source hardware .stl files by Diwas Bhattarai can be found in [Hardware](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models) and be 3D-printed. It uses the Logitech c615 as a world camera and the MicroSoft HD 6000 or Raspberry Pi camera as an (IR-lit) eye camera.
