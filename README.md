@@ -16,7 +16,7 @@ To have the complete eye tracking experience with the [eye tracker](https://gith
 ```
 Pi-Pupil-Detection
 │   README.md
-└───Configration
+└───Configuration
 │   │- Shell Script for project config in Pi
 │
 └───Raspberry-Pi
@@ -28,7 +28,7 @@ Pi-Pupil-Detection
 
 ```
 ## Installing OpenCV and all dependencies on the Raspberry Pi:
-Make the configration-pi.sh script in the Configuration folder executable: 
+Make the configuration-pi.sh script in the Configuration folder executable: 
 ```chmod a+x configration-pi.sh```
 
 And then execute it with:
