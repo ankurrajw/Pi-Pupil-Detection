@@ -29,7 +29,7 @@ Pi-Pupil-Detection
 ```
 ## Installing OpenCV and all dependencies on the Raspberry Pi:
 Make the configuration-pi.sh script in the Configuration folder executable: 
-```chmod a+x configration-pi.sh```
+```chmod a+x configuration-pi.sh```
 
 And then execute it with:
 ```sudo ./configuration-pi.sh```
