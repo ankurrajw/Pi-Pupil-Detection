@@ -5,6 +5,7 @@ And from my thesis: *Embedded Pupil Detection on a Raspberry Pi-based Wearable S
 
 ## Eye-Tracker-Hardware
 The hardware .stl files by Diwas Bhattarai can be found in [Hardware](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models)
+![Image](overview.png)
 
 ## Basic requirement
 Since the development was done on both Windows and Raspberry Pi, parts of code can be run as standalone software.
