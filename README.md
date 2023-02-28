@@ -1,6 +1,7 @@
 # Pi-Pupil-Detection
 This repository contains code from my thesis: *Embedded Pupil Detection on a
-Raspberry Pi-based Wearable System*
+Raspberry Pi-based Wearable System* and for the paper: 
+Ankur Raj, Diwas Bhattarai, & Kristof Van Laerhoven (2023), "An Embedded and Real-Time Pupil Detection Pipeline". https://doi.org/10.5281/zenodo.7682640
 
 ## Eye-Tracker-Hardware
 
@@ -27,4 +28,9 @@ Pi-Pupil-Detection
 ....
 
 ```
-## 
+## Installing OpenCV and all dependencies on the Raspberry Pi:
+Make the configration-pi.sh script in the Configuration folder executable: 
+```chmod a+x configration-pi.sh```
+And then execute it with:
+```sudo ./configuration-pi.sh```
+
