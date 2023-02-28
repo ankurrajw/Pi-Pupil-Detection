@@ -12,7 +12,7 @@ Our open-source hardware .stl files by Diwas Bhattarai can be found in [Hardware
 Since the development was done offline (on Windows) and on the Raspberry Pi, parts of code can be run as standalone software.
 To have the complete eye tracking experience with the [Eye-Tracker](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models), the eye tracking hardware has to be put together first (see above).
 
-## Project structure
+### Project structure
 ```
 Pi-Pupil-Detection
 │   README.md
