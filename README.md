@@ -1,10 +1,11 @@
 # Pi-Pupil-Detection
 This repository contains code from the paper: 
 Ankur Raj, Diwas Bhattarai, & Kristof Van Laerhoven (2023), "An Embedded and Real-Time Pupil Detection Pipeline". https://doi.org/10.5281/zenodo.7682640
+
 And from my thesis: *Embedded Pupil Detection on a Raspberry Pi-based Wearable System*.
 
 ## Eye-Tracker-Hardware
-The hardware .stl files by Diwas Bhattarai can be found in [Hardware](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models)
+Our open-source hardware .stl files by Diwas Bhattarai can be found in [Hardware](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models) and be 3D-printed. 
 ![Image](overview.png)
 
 ## Basic requirement
@@ -12,7 +13,6 @@ Since the development was done on both Windows and Raspberry Pi, parts of code c
 To have the complete eye tracking experience with the [eye tracker](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models), the eye tracker has to be put together first.
 
 ## Project structure
-
 ```
 Pi-Pupil-Detection
 │   README.md
