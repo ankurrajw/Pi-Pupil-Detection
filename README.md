@@ -43,5 +43,10 @@ Two windows will pop up that give the live feed of both cameras. The result will
 ![Image](camstreams.jpg)
 
 When running this python script in the same directory: ```python3 detect.py```, the detector will operate in real-time on the pupil camera and draw the detected pupil as an oval line: 
+
 <img src="detection.jpg" width="300" height="300">
+
+Look into the script to see which steps and parameters were used, these should work well for the above setup. For the experiment scripts that were used in the paper above, you can explore the Windows and Raspberry-Pi directories.
+
+
 
