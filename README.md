@@ -42,7 +42,6 @@ Two windows will pop up that give the live feed of both cameras. The result will
 
 ![Image](camstreams.jpg)
 
-When running this python script in the same directory: ```python3 detect.py```, the detector will operate in the current window:
-
+When running this python script in the same directory: ```python3 detect.py```, the detector will operate in real-time on the pupil camera and draw the detected pupil as an oval line:
 ![Image](detection.jpg)
 
