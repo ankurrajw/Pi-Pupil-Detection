@@ -11,9 +11,8 @@ More detailed build instuctions are in the repository above. The designs use the
 ![Image](overview.png)
 
 ## Step 2: Use a Raspberry Pi as a local computing platform 
-Since the development was done offline (on Windows) and on the Raspberry Pi, parts of code can be run as standalone software.
-To have the complete eye tracking experience with the [Eye-Tracker](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models), the eye tracking hardware has to be put together first (see above).
-
+Since the development was done offline (on Windows) and on the Raspberry Pi, some code can be run as standalone software on benchmark datasets. 
+To have the complete eye tracking experience with the [Eye-Tracker](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models), the eye tracking hardware has to be put together first (see above). We assume a Raspberry Pi Model 4B here with the default Raspberry Pi OS Linux distribution. 
 ### Project structure
 ```
 Pi-Pupil-Detection
