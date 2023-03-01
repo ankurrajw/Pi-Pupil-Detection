@@ -12,7 +12,7 @@ More detailed build instuctions are in the repository above. The designs use the
 
 ## Step 2: Use a Raspberry Pi as a local computing platform 
 Since the development was done offline (on Windows) and on the Raspberry Pi, some code can be run as standalone software on benchmark datasets. 
-To have the complete eye tracking experience with the [Eye-Tracker](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models), the eye tracking hardware has to be put together first (see above). We assume a Raspberry Pi Model 4B here with the default Raspberry Pi OS Linux distribution. 
+To have the complete eye tracking experience with the [Eye-Tracker](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models), the eye tracking hardware has to be put together first (see above). We assume a Raspberry Pi Model 4B here with the default [Raspberry Pi OS Linux distribution](https://www.raspberrypi.com/documentation/computers/os.html) based on Debian, and an internet connection. 
 ### Project structure
 ```
 Pi-Pupil-Detection
@@ -28,11 +28,11 @@ Pi-Pupil-Detection
 ....
 
 ```
-## Step 3: Installing OpenCV and all dependencies on the Raspberry Pi
-Make the configuration-pi.sh script in the Configuration folder executable: 
+## Step 3: Installing OpenCV and other packages on Pi
+To install all packages need for our softawre on the Raspberry Pi, make the configuration-pi.sh script in the Configuration folder executable: 
 ```chmod a+x configuration-pi.sh```
 
-And then execute it with:
+..and then execute it with:
 ```sudo ./configuration-pi.sh```
 ## Step 4: Running the cameras and detector on Pi
 Run this python script in ```Raspberry-Pi``` to show both streams from the world and pupil cameras:
