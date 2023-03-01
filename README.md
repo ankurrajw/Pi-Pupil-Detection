@@ -44,5 +44,5 @@ Two windows will pop up that give the live feed of both cameras. The result will
 
 When running this python script in the same directory: ```python3 detect.py```, the detector will operate in the current window:
 
-![Image](detection.png)
+![Image](detection.jpg)
 
