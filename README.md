@@ -40,7 +40,7 @@ Run this python script in the ```Raspberry-Pi``` folder to show both streams fro
 
 Two windows will pop up that give the live feed of both cameras. The result will look like this:
 
-![Image](camstreams.jpg)
+![Image](camstreams.jpg | width=300)
 
 When running this python script in the same directory: ```python3 detect.py```, the detector will operate in real-time on the pupil camera and draw the detected pupil as an oval line:
 ![Image](detection.jpg)
