@@ -1,14 +1,23 @@
 # show both camera streams 
-import cv2
-cap = cv2.VideoCapture('libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True')
-#fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
+import cv2
+pcap = cv2.VideoCapture('libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True')
+wcap = cv2.VideoCapture(0)
+if wcap.isOpened():
+        print(f'World camera available:')
+if pcap.isOpened():
+        print(f'Puil camera available:')
+        
 while True:
-	ret, frame = cap.read()
-	frame = frame[0:480, 0:480]
-	cv2.imshow('frame', frame)
+	pret, pframe = pcap.read()
+	pframe = pframe[0:480, 0:480]
+	wret, wframe = wcap.read()
+	wframe = wframe[0:2048:2, 0:2048:2]
+	cv2.imshow('pframe', pframe)
+	cv2.imshow('wframe', wframe)
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
 
-cap.release()
+pcap.release()
+wcap.release()
 cv2.destroyAllWindows()
