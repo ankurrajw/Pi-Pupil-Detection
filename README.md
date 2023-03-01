@@ -29,7 +29,7 @@ Pi-Pupil-Detection
 
 ```
 ## Step 3: Installing OpenCV and other packages on Pi
-To install all packages need for our softawre on the Raspberry Pi, make the configuration-pi.sh script in the Configuration folder executable: 
+To install all packages need for our software on the Raspberry Pi, make the configuration-pi.sh script in the Configuration folder executable: 
 ```chmod a+x configuration-pi.sh```
 
 ..and then execute it with:
@@ -41,4 +41,8 @@ Run this python script in the ```Raspberry-Pi``` folder to show both streams fro
 Two windows will pop up that give the live feed of both cameras. The result will look like this:
 
 ![Image](camstreams.jpg)
+
+When running this python script in the same directory: ```python3 detect.py```, the detector will operate in the current window:
+
+![Image](detection.png)
 
