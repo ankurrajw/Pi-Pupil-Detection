@@ -5,7 +5,7 @@ import numpy as np
 import random as rng
 
 '''Change the parameters to conduct a real time detection'''
-CANNY_THRESHOLD = 100
+CANNY_THRESHOLD = 25
 MEDIAN_BLUR_K_SIZE = 9
 MORPH_K_SIZE = 1
 
@@ -40,26 +40,13 @@ def draw_ellipse(_drawing, _contours_filtered):
         area_contour_hull = cv2.contourArea(c)
         area_ellipse = (np.pi / 4) * MA * ma
         #print("Area Ellipse :{} Area Contour Hull :{}".format(area_ellipse, area_contour_hull))
-        cv.ellipse(_drawing, minEllipse[i], color=color, thickness=2)
+        cv2.ellipse(_drawing, minEllipse[i], color=color, thickness=2)
     return _drawing
-
-
-def draw_ellipse_rgb(_image, _contours):
-    minEllipse = [None] * len(_contours)
-    for i, c in enumerate(_contours):
-        minEllipse[i] = cv.fitEllipse(c)
-        color = (rng.randint(0, 256), rng.randint(0, 256), rng.randint(0, 256))
-        cv.drawContours(_image, _contours, i, color)
-        cv.ellipse(_image, minEllipse[i], color=color, thickness=2)
-    return _image
 
 
 
 srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
 pcap = cv2.VideoCapture(srcPiCam)
-wcap = cv2.VideoCapture(0)
-if wcap.isOpened():
-        print(f'World camera available:')
 if pcap.isOpened():
         print(f'Puil camera available:')
         
@@ -67,10 +54,8 @@ kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
 
 while True:
 	pret, pframe = pcap.read()
-	wret, wframe = wcap.read()
-	if pret: # and wret:
+	if pret: 
 		pframe = pframe[0:480, 0:480]
-		wframe = wframe[0:2048:2, 0:2048:2]
 		output = pframe.copy()
 		src_gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
 		src_gray = cv2.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
@@ -79,13 +64,11 @@ while True:
 		contours, _ = cv2.findContours(canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 		contours_filtered = filter_contour(contours)
 		drawing = np.zeros((canny.shape[0], canny.shape[1], 3), dtype=np.uint8)
-		drawing = draw_ellipse(drawing, contours_filtered)
-		cv2.imshow('pframe', src_gray)
-		cv2.imshow('wframe', wframe)
+		drawing = draw_ellipse(opening, contours_filtered)
+		cv2.imshow('dframe', drawing)
 		
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
 
 pcap.release()
-wcap.release()
 cv2.destroyAllWindows()
