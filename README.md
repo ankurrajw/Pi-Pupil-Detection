@@ -37,5 +37,5 @@ And then execute it with:
 ## Step 4: Running the cameras and detector on Pi
 Run this python script in ```Raspberry-Pi``` to show both streams from the world and pupil cameras:
 ```python3 camstreams.py```
-![Image](camstreams.png)
+![Image](camstreams.jpg)
 
