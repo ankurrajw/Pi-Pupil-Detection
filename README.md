@@ -6,7 +6,8 @@ And from my thesis: *Embedded Pupil Detection on a Raspberry Pi-based Wearable S
 
 ## Step 1: Print your Eye-Tracker
 We rely here on our open-source hardware .stl files by Diwas Bhattarai can be found in [Hardware](https://github.com/Lifestohack/masterthesis-eye-tracker/tree/master/models) and be 3D-printed. You can 3D print at 0.15 layer height. Use glue, ensure the print bed is hot, and use a brim of 4 mm to avoid warping (these work for use well on Cura and with an UltiMaker).
-The designs use the Logitech c615 as a world camera and the MicroSoft HD 6000 or a Raspberry Pi camera as an (IR-lit) eye camera.
+More detailed build instuctions are in the repository above. The designs use the Logitech c615 as a world camera and the MicroSoft HD 6000 or a Raspberry Pi camera as an (IR-lit) eye camera.
+
 ![Image](overview.png)
 
 ## Step 2: Use a Raspberry Pi as a local computing platform 
