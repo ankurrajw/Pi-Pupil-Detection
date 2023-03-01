@@ -35,7 +35,7 @@ To install all packages need for our softawre on the Raspberry Pi, make the conf
 ..and then execute it with:
 ```sudo ./configuration-pi.sh```
 ## Step 4: Running the cameras and detector on Pi
-Run this python script in ```Raspberry-Pi``` to show both streams from the world and pupil cameras:
+Run this python script in the ```Raspberry-Pi``` folder to show both streams from the world and pupil cameras:
 ```python3 camstreams.py```
 
 Two windows will pop up that give the live feed of both cameras. The result will look like this:
