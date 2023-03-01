@@ -35,7 +35,7 @@ And then execute it with:
 ```sudo ./configuration-pi.sh```
 
 ## Step 4: Running the cameras and detector on Pi
-Run this script in ```Raspberry-Pi``` to show both streams from the world and pupil cameras:
-```chmod a+x streams.py; ./streams.py```
-
+Run this python script in ```Raspberry-Pi``` to show both streams from the world and pupil cameras:
+```python3 camstreams.py```
+![Image](camstreams.png)
 
