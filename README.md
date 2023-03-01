@@ -1,6 +1,7 @@
 # Pi-Pupil-Detection
-This repository contains code from the paper: 
-Ankur Raj, Diwas Bhattarai, & Kristof Van Laerhoven (2023), "An Embedded and Real-Time Pupil Detection Pipeline". https://doi.org/10.5281/zenodo.7682640, https://arxiv.org/abs/2302.14098
+This repository contains code from the paper:
+
+Ankur Raj, Diwas Bhattarai, & Kristof Van Laerhoven (2023), "An Embedded and Real-Time Pupil Detection Pipeline". https://doi.org/10.5281/zenodo.7682640, https://arxiv.org/abs/2302.14098 
 
 And from my thesis: *Embedded Pupil Detection on a Raspberry Pi-based Wearable System* at the Ubiquitous Computing Lab at the University of Siegen, Germany.
 
