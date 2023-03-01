@@ -38,7 +38,7 @@ And then execute it with:
 Run this python script in ```Raspberry-Pi``` to show both streams from the world and pupil cameras:
 ```python3 camstreams.py```
 
-The result will look like this:
+Two windows will pop up that give the live feed of both cameras. The result will look like this:
 
 ![Image](camstreams.jpg)
 
